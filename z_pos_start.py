@@ -7,8 +7,8 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 
 from z_pos.command_v5.v5_command import Command
-from z_pos.common.SMILECON_CONTS import SmileconConsts
-from z_pos.common.SMILECON_URL_CONSTS import SmileconUrlConsts
+from z_pos.common.CONTS import Consts
+from z_pos.common.URL_CONSTS import UrlConsts
 from z_pos.socket_control.socket_control import SocketControl
 from z_pos.vo.pos_front_vo import PosFrontVO
 
@@ -36,9 +36,9 @@ class WindowClass(QMainWindow, form_class):
         self.basedir = os.path.dirname(__file__)  # 현재 디렉토리
         self.HOST = ''
         self.PORT = ''
-        self.VERSION = '0005'
+        self.VERSION = ''
         self.WEB_HOST = ''
-        self.WEB_POS_VER = SmileconConsts.ServiceType.WEB_POS_1_42
+        self.WEB_POS_VER = ''
 
         # HOST, PORT 세팅
         self.initConfig()
@@ -101,21 +101,21 @@ class WindowClass(QMainWindow, form_class):
         ui 초기화
         :return:
         '''
-        if self.HOST in SmileconConsts.ServiceMode.DEV_HOST:
+        if self.HOST in Consts.ServiceMode.DEV_HOST:
             self.setWindowTitle('z_pos DEV')
             self.setWindowIcon(QIcon(os.path.join(self.basedir, 'logo_grey.ico')))
             self.service_type_label.setStyleSheet("background-color : #0e82ff")
 
-            self.SERVICE_MODE = SmileconConsts.ServiceMode.DEV_MODE
-            self.WEB_HOST = SmileconUrlConsts.DEV_HOST
+            self.SERVICE_MODE = Consts.ServiceMode.DEV_MODE
+            self.WEB_HOST = UrlConsts.DEV_HOST
 
         elif self.HOST in SmileconConsts.ServiceMode.PROD_HOST:
             self.setWindowTitle('z_pos')
             self.setWindowIcon(QIcon(os.path.join(self.basedir, 'logo.ico')))
             self.service_type_label.setStyleSheet("background-color : #ff557f")
 
-            self.SERVICE_MODE = SmileconConsts.ServiceMode.PROD_MODE
-            self.WEB_HOST = SmileconUrlConsts.PROD_HOST
+            self.SERVICE_MODE = Consts.ServiceMode.PROD_MODE
+            self.WEB_HOST = UrlConsts.PROD_HOST
 
         else:  # 호스트가 즐거운이 아니면 비확성화
             self.setWindowTitle('z_pos v5 DISABLED')
@@ -143,7 +143,7 @@ class WindowClass(QMainWindow, form_class):
         self.btn_cancel.setEnabled(False)  # 승인취소(102)
         self.btn_net_cancel.setEnabled(False)  # 승인 망 취소(103) : 사용안함
 
-        if self.POS_MODE == SmileconConsts.PosMode.POS_WEB:
+        if self.POS_MODE == Consts.PosMode.POS_WEB:
             self.btn_reset.setEnabled(False)
             self.btn_cert.setEnabled(True)
 
@@ -214,9 +214,9 @@ class WindowClass(QMainWindow, form_class):
         인증(100)
         :return:
         '''
-        if self.POS_MODE == SmileconConsts.PosMode.POS_TCP:
+        if self.POS_MODE == Consts.PosMode.POS_TCP:
             self._tcp_cert()
-        elif self.POS_MODE == SmileconConsts.PosMode.POS_WEB:
+        elif self.POS_MODE == Consts.PosMode.POS_WEB:
             self.text_browser.append('==> 웹POS 인증')
             self._web_cert()
         else:
@@ -240,9 +240,9 @@ class WindowClass(QMainWindow, form_class):
         승인취소(102)
         :return:
         '''
-        if self.POS_MODE == SmileconConsts.PosMode.POS_TCP:
+        if self.POS_MODE == Consts.PosMode.POS_TCP:
             self._tcp_cncl()
-        elif self.POS_MODE == SmileconConsts.PosMode.POS_WEB:
+        elif self.POS_MODE == Consts.PosMode.POS_WEB:
             self.text_browser.append('==> 웹POS 승인 취소')
             self._web_cncl()
         else:
@@ -256,11 +256,11 @@ class WindowClass(QMainWindow, form_class):
         로그창 지우기
         :return:
         '''
-        if self.POS_MODE == SmileconConsts.PosMode.POS_TCP:
+        if self.POS_MODE == Consts.PosMode.POS_TCP:
             self.text_browser.clear()
             self.text_browser.append(f"==> SERVICE MODE : {self.SERVICE_MODE} | POS MODE : {self.POS_MODE}")
             self.text_browser.append(f"==> HOST : {self.HOST} | PORT : {self.PORT}\n")
-        elif self.POS_MODE == SmileconConsts.PosMode.POS_WEB:
+        elif self.POS_MODE == Consts.PosMode.POS_WEB:
             self.text_browser.clear()
             self.text_browser.append(f"==> SERVICE MODE : {self.SERVICE_MODE} | POS MODE : {self.POS_MODE}")
             self.text_browser.append(f"==> HOST : {self.WEB_HOST} \n")
@@ -300,8 +300,8 @@ class WindowClass(QMainWindow, form_class):
         '''
         if self.radio_tcp.isChecked():
             self.line_pos_code.setEnabled(True)
-            self.POS_MODE = SmileconConsts.PosMode.POS_TCP
-            self.VERSION = '0005'
+            self.POS_MODE = Consts.PosMode.POS_TCP
+            self.VERSION = ''
             self.line_version.setText(self.VERSION)
 
             self.text_browser.clear()
@@ -313,7 +313,7 @@ class WindowClass(QMainWindow, form_class):
             print(f"==> POS MODE : TCP/IP")
         elif self.radio_web.isChecked():
             self.line_pos_code.setDisabled(True)
-            self.POS_MODE = SmileconConsts.PosMode.POS_WEB
+            self.POS_MODE = Consts.PosMode.POS_WEB
             self.VERSION = self.WEB_POS_VER
             self.line_version.setText(self.VERSION)
 
